@@ -6,33 +6,11 @@ import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 
 import envSchema from './schemas/env.schema.ts'
+import loggerSchema from './schemas/logger.schema.ts'
 import prismaPlugin from './plugins/prisma.plugin.ts'
 import userRoutes from './routes/user.route.ts'
 
-const server = fastify({
-    logger: {
-        redact: ['req.headers.authorization'],
-        level: 'info',
-        transport: {
-            target: 'pino-pretty',
-            options: {
-                translateTime: 'dd-MM-yyyy HH:MM:ss Z'
-            }
-        },
-        serializers: {
-            req(request) {
-                return {
-                    method: request.method,
-                    url: request.url,
-                    headers: request.headers,
-                    host: request.host,
-                    remoteAddress: request.ip,
-                    remotePort: request.socket.remotePort
-                }
-            }
-        }
-    }
-}).withTypeProvider<ZodTypeProvider>();
+const server = fastify({ logger: loggerSchema }).withTypeProvider<ZodTypeProvider>();
 
 
 server.setValidatorCompiler(validatorCompiler);
@@ -76,5 +54,5 @@ server.listen({ port: server.config.PORT }, (error, address) => {
         console.error(error);
         process.exit(1);
     }
-    console.log(`Server documentation on: ${address}/docs\n`);
+    server.log.info(`Server documentation on: ${address}/docs`);
 });

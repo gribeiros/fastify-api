@@ -12,10 +12,9 @@ export async function getUserById(request: FastifyRequest<{ Params: finUserByIdP
     const { id } = request.params
     const user = await prisma.user.findUnique({
         where: {
-            id: parseInt(id, 10)
+            id: parseInt(id)
         }
     });
 
-    console.log(user)
     reply.status(200).send(user)
 }

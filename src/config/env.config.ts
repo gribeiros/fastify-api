@@ -5,7 +5,6 @@ declare module "fastify" {
         config: {
             PORT: number;
             PATH_API: string;
-            TZ: string;
         };
     }
 }
