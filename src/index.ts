@@ -9,8 +9,30 @@ import envSchema from './schemas/env.schema.ts'
 import prismaPlugin from './plugins/prisma.plugin.ts'
 import userRoutes from './routes/user.route.ts'
 
-
-const server = fastify().withTypeProvider<ZodTypeProvider>();
+const server = fastify({
+    logger: {
+        redact: ['req.headers.authorization'],
+        level: 'info',
+        transport: {
+            target: 'pino-pretty',
+            options: {
+                translateTime: 'dd-MM-yyyy HH:MM:ss Z'
+            }
+        },
+        serializers: {
+            req(request) {
+                return {
+                    method: request.method,
+                    url: request.url,
+                    headers: request.headers,
+                    host: request.host,
+                    remoteAddress: request.ip,
+                    remotePort: request.socket.remotePort
+                }
+            }
+        }
+    }
+}).withTypeProvider<ZodTypeProvider>();
 
 
 server.setValidatorCompiler(validatorCompiler);
@@ -35,7 +57,7 @@ server.register(fastifySwagger, {
         },
         servers: [
             {
-                url: `${server.config.PATH_API}`, // Define o prefixo base
+                url: `/${server.config.PATH_API}`, // Define o prefixo base
                 description: 'Base path URL'
             }
         ]
@@ -54,5 +76,5 @@ server.listen({ port: server.config.PORT }, (error, address) => {
         console.error(error);
         process.exit(1);
     }
-    console.log(`Server listening at ${address}`);
+    console.log(`Server documentation on: ${address}/docs\n`);
 });
