@@ -6,11 +6,12 @@ import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
 
 import envSchema from './schemas/env.schema.ts'
-import loggerSchema from './schemas/logger.schema.ts'
+import loggerConfig from './config/logger.config.ts'
 import prismaPlugin from './plugins/prisma.plugin.ts'
 import userRoutes from './routes/user.route.ts'
+import errorHandler from './config/errorHandler.config.ts'
 
-const server = fastify({ logger: loggerSchema }).withTypeProvider<ZodTypeProvider>();
+const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
 
 server.setValidatorCompiler(validatorCompiler);
@@ -43,11 +44,13 @@ server.register(fastifySwagger, {
     transform: jsonSchemaTransform
 });
 
+server.setErrorHandler(errorHandler)
+
 server.register(fastifySwaggerUi, {
     routePrefix: '/docs'
 })
 
-server.register(userRoutes, { prefix: `${server.config.PATH_API}` })
+server.register(userRoutes, { prefix: `${server.config.PATH_API}/users` })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
