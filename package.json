@@ -5,7 +5,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "clean": "tsc --build --clean",
+    "clean": "tsc --build --clean && rm -r build",
     "build": "tsc -p tsconfig.json",
     "start": "node build/index.js",
     "dev": "tsx watch src/index.ts"
