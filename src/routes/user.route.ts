@@ -1,6 +1,8 @@
 import { FastifyInstance } from "fastify";
 import { z } from 'zod';
 import { createUser, deleteUser, getAllUsers, getUserById, updateUser } from "../controllers/user.controller.ts";
+import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
+import { createUpdateUserSchema } from "../schemas/user.shema.ts";
 
 export default async function userRoutes(server: FastifyInstance) {
 
@@ -15,7 +17,7 @@ export default async function userRoutes(server: FastifyInstance) {
                     {
                         id: z.number(),
                         name: z.string(),
-                        email: z.string().email({message: "Pass a valid e-mail"}),
+                        email: z.string().email(),
                     }
                 ))
             },
@@ -30,21 +32,16 @@ export default async function userRoutes(server: FastifyInstance) {
         schema: {
             description: "Get an user by id",
             tags: ["users"],
-            params: z.object({
-                id: z.string().nonempty({ message: 'Id not be null' }),
-            }),
+            params: defaultIdParam,
             response: {
                 200: z.object(
                     {
                         id: z.number(),
-                        email: z.string().email({message: "Pass a valid e-mail"}),
+                        email: z.string().email(),
                         name: z.string(),
                     }
                 ),
-                404: z.object({
-                    error: z.boolean(),
-                    message: z.string(),
-                })
+                404: defaultResponseError
             },
         },
         handler: getUserById
@@ -56,14 +53,9 @@ export default async function userRoutes(server: FastifyInstance) {
         schema: {
             description: 'Create an user',
             tags: ['users'],
-            body: z.object({
-                name: z.string().nonempty({ message: 'Name not be empty' }),
-                email: z.string().email({message: "Pass a valid e-mail"}),
-            }),
+            body: createUpdateUserSchema,
             response: {
-                200: z.object({
-                    message: z.string()
-                })
+                200: defaultResponseSucess
             }
 
         },
@@ -77,17 +69,10 @@ export default async function userRoutes(server: FastifyInstance) {
             schema: {
                 description: "Update an user",
                 tags: ['users'],
-                params: z.object({
-                    id: z.string().nonempty({ message: 'Id not be null' }),
-                }),
-                body: z.object({
-                    name: z.string().nonempty({ message: 'Name not be empty' }),
-                    email: z.string().email({message: "Pass a valid e-mail"}),
-                }),
+                params: defaultIdParam,
+                body: createUpdateUserSchema,
                 response: {
-                    200: z.object({
-                        message: z.string()
-                    })
+                    200: defaultResponseSucess
                 }
             },
             handler: updateUser
@@ -101,13 +86,9 @@ export default async function userRoutes(server: FastifyInstance) {
             schema: {
                 description: 'Delete an user',
                 tags: ['users'],
-                params: z.object({
-                    id: z.string().nonempty({ message: 'Id not be null' }),
-                }),
+                params: defaultIdParam,
                 response: {
-                    200: z.object({
-                        message: z.string()
-                    })
+                    200: defaultResponseSucess
                 }
             },
             handler: deleteUser

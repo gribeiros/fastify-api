@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-import { createUpdateUserBodyType, finUserByIdParamType } from '../schemas/user.shema.ts'
+import { createUpdateUserBodyType, createUpdateUserSchema } from '../schemas/user.shema.ts'
 import { UserNotCreatedError, UserNotFoundError, UserNotUpdatedError, UserNotDeletedError } from '../error/user/userErrors.ts';
+import { defaultIdParam, defaultIdParamType } from '../schemas/default.schema.ts';
 
 export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) {
     const { prisma, log } = request.server;
@@ -11,9 +12,9 @@ export async function getAllUsers(request: FastifyRequest, reply: FastifyReply) 
     reply.status(200).send(users)
 }
 
-export async function getUserById(request: FastifyRequest<{ Params: finUserByIdParamType }>, reply: FastifyReply) {
+export async function getUserById(request: FastifyRequest<{ Params: defaultIdParamType }>, reply: FastifyReply) {
     const { prisma, log } = request.server;
-    const { id } = request.params
+    const { id } = defaultIdParam.parse(request.params);
 
     const user = await prisma.user.findUniqueOrThrow({
         where: {
@@ -29,7 +30,7 @@ export async function getUserById(request: FastifyRequest<{ Params: finUserByIdP
 
 export async function createUser(request: FastifyRequest<{ Body: createUpdateUserBodyType }>, reply: FastifyReply) {
     const { prisma, log } = request.server;
-    const { name, email } = request.body
+    const { name, email } = createUpdateUserSchema.parse(request.body)
 
     await prisma.user.create({
         data: {
@@ -44,10 +45,10 @@ export async function createUser(request: FastifyRequest<{ Body: createUpdateUse
     reply.status(201).send({ message: 'User created' })
 }
 
-export async function updateUser(request: FastifyRequest<{ Params: finUserByIdParamType, Body: createUpdateUserBodyType }>, reply: FastifyReply) {
+export async function updateUser(request: FastifyRequest<{ Params: defaultIdParamType, Body: createUpdateUserBodyType }>, reply: FastifyReply) {
     const { prisma, log } = request.server;
-    const { name, email } = request.body
-    const { id } = request.params
+    const { name, email } = createUpdateUserSchema.parse(request.body)
+    const { id } = defaultIdParam.parse(request.params);
 
     await prisma.user.update({
         where: {
@@ -66,9 +67,9 @@ export async function updateUser(request: FastifyRequest<{ Params: finUserByIdPa
 }
 
 
-export async function deleteUser(request: FastifyRequest<{ Params: finUserByIdParamType }>, reply: FastifyReply) {
+export async function deleteUser(request: FastifyRequest<{ Params: defaultIdParamType }>, reply: FastifyReply) {
     const { prisma, log } = request.server;
-    const { id } = request.params
+    const { id } = defaultIdParam.parse(request.params)
 
     await prisma.user.delete({
         where: {

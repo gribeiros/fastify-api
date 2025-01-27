@@ -10,6 +10,7 @@ import loggerConfig from './config/logger.config.ts'
 import prismaPlugin from './plugins/prisma.plugin.ts'
 import userRoutes from './routes/user.route.ts'
 import errorHandler from './config/errorHandler.config.ts'
+import profileRoutes from "./routes/profile.route.ts";
 
 const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
@@ -51,6 +52,7 @@ server.register(fastifySwaggerUi, {
 })
 
 server.register(userRoutes, { prefix: `${server.config.PATH_API}/users` })
+server.register(profileRoutes, { prefix: `${server.config.PATH_API}/profiles` })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
