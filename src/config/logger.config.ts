@@ -14,6 +14,7 @@ const logger = {
             return {
                 method: request.method,
                 url: request.url,
+                body: request.body,
                 headers: request.headers,
                 host: request.host,
                 remoteAddress: request.ip,
