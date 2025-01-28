@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { z } from 'zod';
 import { createProfile, deleteProfile, getAllProfiles, getProfileById, updateProfile } from "../controllers/profile.controller.ts";
-import { create } from "domain";
 import { defaultIdParam, defaultResponseSucess } from "../schemas/default.schema.ts";
 import { createUpdateProfileSchema } from "../schemas/profile.schema.ts";
 
@@ -61,7 +60,7 @@ export default async function profileRoutes(server: FastifyInstance) {
             },
         },
         handler: getProfileById
-    })
+    });
 
     server.route({
         method: "POST",
@@ -76,7 +75,7 @@ export default async function profileRoutes(server: FastifyInstance) {
 
         },
         handler: createProfile
-    })
+    });
 
     server.route(
         {
@@ -92,8 +91,7 @@ export default async function profileRoutes(server: FastifyInstance) {
                 }
             },
             handler: updateProfile
-        }
-    )
+        });
 
     server.route(
         {
@@ -109,6 +107,5 @@ export default async function profileRoutes(server: FastifyInstance) {
             },
             handler: deleteProfile
 
-        }
-    )
+        });
 }

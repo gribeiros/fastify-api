@@ -11,6 +11,7 @@ import prismaPlugin from './plugins/prisma.plugin.ts'
 import userRoutes from './routes/user.route.ts'
 import errorHandler from './config/errorHandler.config.ts'
 import profileRoutes from "./routes/profile.route.ts";
+import postRoutes from "./routes/post.route.ts";
 
 const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
@@ -22,6 +23,8 @@ await server.register(fastifyEnv, {
     dotenv: true,
     schema: envSchema,
 });
+
+const PATH_API: string = server.config.PATH_API;
 
 server.register(prismaPlugin);
 
@@ -37,7 +40,7 @@ server.register(fastifySwagger, {
         },
         servers: [
             {
-                url: `/${server.config.PATH_API}`, // Define o prefixo base
+                url: `/${PATH_API}`, // Define o prefixo base
                 description: 'Base path URL'
             }
         ]
@@ -51,8 +54,9 @@ server.register(fastifySwaggerUi, {
     routePrefix: '/docs'
 })
 
-server.register(userRoutes, { prefix: `${server.config.PATH_API}/users` })
-server.register(profileRoutes, { prefix: `${server.config.PATH_API}/profiles` })
+server.register(userRoutes, { prefix: `${PATH_API}/users` })
+server.register(profileRoutes, { prefix: `${PATH_API}/profiles` })
+server.register(postRoutes, { prefix: `${PATH_API}/post` })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
