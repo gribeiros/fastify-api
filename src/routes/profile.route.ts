@@ -1,8 +1,7 @@
 import { FastifyInstance } from "fastify";
-import { z } from 'zod';
 import { createProfile, deleteProfile, getAllProfiles, getProfileById, updateProfile } from "../controllers/profile.controller.ts";
-import { defaultIdParam, defaultResponseSucess } from "../schemas/default.schema.ts";
-import { createUpdateProfileSchema } from "../schemas/profile.schema.ts";
+import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
+import { createUpdateProfileSchema, defaultProfileSchema, listOfProfiles } from "../schemas/profile.schema.ts";
 
 export default async function profileRoutes(server: FastifyInstance) {
 
@@ -13,19 +12,7 @@ export default async function profileRoutes(server: FastifyInstance) {
             description: 'List of profiles',
             tags: ['profiles'],
             response: {
-                200: z.array(z.object(
-                    {
-                        id: z.number(),
-                        bio: z.string(),
-                        user: z.object(
-                            {
-                                id: z.number(),
-                                name: z.string(),
-                                email: z.string().email(),
-                            }
-                        ),
-                    }
-                ))
+                200: listOfProfiles
             },
         },
         handler: getAllProfiles
@@ -40,23 +27,8 @@ export default async function profileRoutes(server: FastifyInstance) {
             tags: ['profiles'],
             params: defaultIdParam,
             response: {
-                200: z.object(
-                    {
-                        id: z.number(),
-                        bio: z.string(),
-                        user: z.object(
-                            {
-                                id: z.number(),
-                                name: z.string(),
-                                email: z.string().email(),
-                            }
-                        ),
-                    }
-                ),
-                404: z.object({
-                    error: z.boolean(),
-                    message: z.string(),
-                })
+                200: defaultProfileSchema,
+                404: defaultResponseError
             },
         },
         handler: getProfileById

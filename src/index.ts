@@ -12,6 +12,7 @@ import userRoutes from './routes/user.route.ts'
 import errorHandler from './config/errorHandler.config.ts'
 import profileRoutes from "./routes/profile.route.ts";
 import postRoutes from "./routes/post.route.ts";
+import helathRoutes from "./routes/health.route.ts";
 
 const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
@@ -57,6 +58,8 @@ server.register(fastifySwaggerUi, {
 server.register(userRoutes, { prefix: `${PATH_API}/users` })
 server.register(profileRoutes, { prefix: `${PATH_API}/profiles` })
 server.register(postRoutes, { prefix: `${PATH_API}/post` })
+
+server.register(helathRoutes, { prefix: `${PATH_API}` })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {

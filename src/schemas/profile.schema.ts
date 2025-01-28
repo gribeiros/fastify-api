@@ -5,4 +5,20 @@ export const createUpdateProfileSchema = z.object({
     user_id: z.number().int()
 })
 
+export const defaultProfileSchema = z.object(
+    {
+        id: z.number(),
+        bio: z.string(),
+        user: z.object(
+            {
+                id: z.number(),
+                name: z.string(),
+                email: z.string().email(),
+            }
+        ),
+    }
+)
+
+export const listOfProfiles = z.array(defaultProfileSchema)
+
 export type createUpdateProfileBodyType = z.infer<typeof createUpdateProfileSchema>;

@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { z } from 'zod';
 import { createPost, deletePost, getAllPosts, getPostsById, partialUpdatePost, updatePost } from "../controllers/post.controller.ts";
-import { defaultIdParam, defaultResponseSucess } from "../schemas/default.schema.ts";
+import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
 import { createUpdatePostSchema, defaultPostSchema, listOfPosts, partialUpdatePostSchema } from "../schemas/post.schema.ts";
 
 export default async function postRoutes(server: FastifyInstance) {
@@ -28,10 +27,7 @@ export default async function postRoutes(server: FastifyInstance) {
             params: defaultIdParam,
             response: {
                 200: defaultPostSchema,
-                404: z.object({
-                    error: z.boolean(),
-                    message: z.string(),
-                })
+                404: defaultResponseError
             },
         },
         handler: getPostsById

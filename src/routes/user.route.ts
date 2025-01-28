@@ -1,8 +1,7 @@
 import { FastifyInstance } from "fastify";
-import { z } from 'zod';
 import { createUser, deleteUser, getAllUsers, getUserById, updateUser } from "../controllers/user.controller.ts";
 import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
-import { createUpdateUserSchema } from "../schemas/user.shema.ts";
+import { createUpdateUserSchema, defaultUserSchema, listOfUsers } from "../schemas/user.shema.ts";
 
 export default async function userRoutes(server: FastifyInstance) {
 
@@ -13,13 +12,7 @@ export default async function userRoutes(server: FastifyInstance) {
             description: 'List of users',
             tags: ['users'],
             response: {
-                200: z.array(z.object(
-                    {
-                        id: z.number(),
-                        name: z.string(),
-                        email: z.string().email(),
-                    }
-                ))
+                200: listOfUsers
             },
         },
         handler: getAllUsers
@@ -34,13 +27,7 @@ export default async function userRoutes(server: FastifyInstance) {
             tags: ["users"],
             params: defaultIdParam,
             response: {
-                200: z.object(
-                    {
-                        id: z.number(),
-                        email: z.string().email(),
-                        name: z.string(),
-                    }
-                ),
+                200: defaultUserSchema,
                 404: defaultResponseError
             },
         },
