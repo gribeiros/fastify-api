@@ -4,7 +4,6 @@ import { fastifyCors } from '@fastify/cors'
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
-import fastifyHealthcheck from 'fastify-healthcheck'
 
 import envSchema from './schemas/env.schema.ts'
 import loggerConfig from './config/logger.config.ts'
@@ -54,8 +53,6 @@ server.register(fastifySwaggerUi, {
 
 server.register(userRoutes, { prefix: `${server.config.PATH_API}/users` })
 server.register(profileRoutes, { prefix: `${server.config.PATH_API}/profiles` })
-
-server.register(fastifyHealthcheck, { exposeUptime: true })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
