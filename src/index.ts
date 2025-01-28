@@ -16,22 +16,16 @@ import helathRoutes from "./routes/health.route.ts";
 
 const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
-
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
-await server.register(fastifyEnv, {
-    dotenv: true,
-    schema: envSchema,
-});
+await server.register(fastifyEnv, { dotenv: true, schema: envSchema, });
 
 const PATH_API: string = server.config.PATH_API;
 
 server.register(prismaPlugin);
 
-server.register(fastifyCors, {
-    origin: '*',
-})
+server.register(fastifyCors, { origin: '*', })
 
 server.register(fastifySwagger, {
     openapi: {
@@ -39,27 +33,23 @@ server.register(fastifySwagger, {
             title: 'Fastify_API',
             version: '1.0.0'
         },
-        servers: [
-            {
-                url: `/${PATH_API}`, // Define o prefixo base
-                description: 'Base path URL'
-            }
-        ]
+        servers: [{
+            url: `/${PATH_API}`,
+            description: 'Base path URL'
+        }]
     },
     transform: jsonSchemaTransform
 });
 
-server.setErrorHandler(errorHandler)
+server.register(fastifySwaggerUi, { routePrefix: '/docs' })
 
-server.register(fastifySwaggerUi, {
-    routePrefix: '/docs'
-})
+server.setErrorHandler(errorHandler)
 
 server.register(userRoutes, { prefix: `${PATH_API}/users` })
 server.register(profileRoutes, { prefix: `${PATH_API}/profiles` })
 server.register(postRoutes, { prefix: `${PATH_API}/post` })
 
-server.register(helathRoutes, { prefix: `${PATH_API}` })
+server.register(helathRoutes)
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
