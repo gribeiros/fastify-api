@@ -53,9 +53,10 @@ server.register(helathRoutes)
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
-        console.error(error);
+        server.log.error(error);
         process.exit(1);
     }
     server.log.info(`Server documentation on: ${address}/docs`);
     server.log.info(`Server healthcheck on: ${address}/health`);
+    server.log.info(server.printRoutes())
 });

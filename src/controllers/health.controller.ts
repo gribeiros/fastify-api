@@ -6,9 +6,9 @@ export async function health(request: FastifyRequest, reply: FastifyReply) {
 
     const databaseStatus = await prisma.$queryRaw`SELECT 1`
         .then(() => { return 'ok' })
-        .catch((e) => {
-            log.error(e);
-            return 'error';
+        .catch((e: Error) => {
+            log.error(e)
+            throw e;
         });
 
     const healthStatus: HealthType = {

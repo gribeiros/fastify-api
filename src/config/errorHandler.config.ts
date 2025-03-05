@@ -1,20 +1,23 @@
-import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest } from "fastify";
+import { AppException } from "../error/appException.ts";
 
-const errorHandler = (err: FastifyError, request: FastifyRequest, reply: FastifyReply) => {
-    switch (err.code) {
-        case 'USER_NOT_FOUND':
-            reply.status(404).send({
-                code: err.code,
-                message: err.message,
-            });
-            break;
-        default:
-            reply.status(500).send({
-                code: err.code,
-                message: err.message,
-            });
-            break;
+const errorHandler = (err: Error, request: FastifyRequest, reply: FastifyReply) => {
+    const { log } = request.server;
+
+    if (err instanceof AppException) {
+        reply.status(err.details.httpCode).send({
+            date: new Date(),
+            description: err.details.description,
+            message: err.details.message,
+            path: err.details.path,
+        });
+    } else {
+        log.error(err);
+        reply.status(500).send({
+            code: 500,
+            message: err.message,
+        });
     }
-}
+};
 
-export default errorHandler
+export default errorHandler;

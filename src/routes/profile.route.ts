@@ -1,9 +1,11 @@
 import { FastifyInstance } from "fastify";
-import { createProfile, deleteProfile, getAllProfiles, getProfileById, updateProfile } from "../controllers/profile.controller.ts";
+import { ProfileController } from "../controllers/profile.controller.ts";
 import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
 import { createUpdateProfileSchema, defaultProfileSchema, listOfProfiles } from "../schemas/profile.schema.ts";
 
 export default async function profileRoutes(server: FastifyInstance) {
+    
+    const profileController = new ProfileController();
 
     server.route({
         method: "GET",
@@ -15,7 +17,7 @@ export default async function profileRoutes(server: FastifyInstance) {
                 200: listOfProfiles
             },
         },
-        handler: getAllProfiles
+        handler: profileController.getAllProfiles
     }
     );
 
@@ -31,7 +33,7 @@ export default async function profileRoutes(server: FastifyInstance) {
                 404: defaultResponseError
             },
         },
-        handler: getProfileById
+        handler: profileController.getProfileById
     });
 
     server.route({
@@ -46,7 +48,7 @@ export default async function profileRoutes(server: FastifyInstance) {
             }
 
         },
-        handler: createProfile
+        handler: profileController.createProfile
     });
 
     server.route(
@@ -62,7 +64,7 @@ export default async function profileRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: updateProfile
+            handler: profileController.updateProfile
         });
 
     server.route(
@@ -77,7 +79,7 @@ export default async function profileRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: deleteProfile
+            handler: profileController.deleteProfile
 
         });
 }

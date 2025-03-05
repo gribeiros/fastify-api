@@ -1,9 +1,11 @@
 import { FastifyInstance } from "fastify";
-import { createUser, deleteUser, getAllUsers, getUserById, updateUser } from "../controllers/user.controller.ts";
+import { UserController } from "../controllers/user.controller.ts";
 import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
 import { createUpdateUserSchema, defaultUserSchema, listOfUsers } from "../schemas/user.shema.ts";
 
 export default async function userRoutes(server: FastifyInstance) {
+
+    const userController = new UserController();
 
     server.route({
         method: "GET",
@@ -15,7 +17,7 @@ export default async function userRoutes(server: FastifyInstance) {
                 200: listOfUsers
             },
         },
-        handler: getAllUsers
+        handler: userController.getAllUsers
     }
     );
 
@@ -31,7 +33,7 @@ export default async function userRoutes(server: FastifyInstance) {
                 404: defaultResponseError
             },
         },
-        handler: getUserById
+        handler: userController.getUserById
     })
 
     server.route({
@@ -46,7 +48,7 @@ export default async function userRoutes(server: FastifyInstance) {
             }
 
         },
-        handler: createUser
+        handler: userController.createUser
     })
 
     server.route(
@@ -62,7 +64,7 @@ export default async function userRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: updateUser
+            handler: userController.updateUser
         }
     )
 
@@ -78,7 +80,7 @@ export default async function userRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: deleteUser
+            handler: userController.deleteUser
 
         }
     )

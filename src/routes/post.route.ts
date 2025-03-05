@@ -1,9 +1,11 @@
 import { FastifyInstance } from "fastify";
-import { createPost, deletePost, getAllPosts, getPostsById, partialUpdatePost, updatePost } from "../controllers/post.controller.ts";
+import { PostController } from "../controllers/post.controller.ts";
 import { defaultIdParam, defaultResponseError, defaultResponseSucess } from "../schemas/default.schema.ts";
 import { createUpdatePostSchema, defaultPostSchema, listOfPosts, partialUpdatePostSchema } from "../schemas/post.schema.ts";
 
 export default async function postRoutes(server: FastifyInstance) {
+
+    const postController = new PostController();
 
     server.route({
         method: "GET",
@@ -15,7 +17,7 @@ export default async function postRoutes(server: FastifyInstance) {
                 200: listOfPosts
             },
         },
-        handler: getAllPosts
+        handler: postController.getAllPosts
     });
 
     server.route({
@@ -30,7 +32,7 @@ export default async function postRoutes(server: FastifyInstance) {
                 404: defaultResponseError
             },
         },
-        handler: getPostsById
+        handler: postController.getPostsById
     });
 
     server.route({
@@ -45,7 +47,7 @@ export default async function postRoutes(server: FastifyInstance) {
             }
 
         },
-        handler: createPost
+        handler: postController.createPost
     });
 
 
@@ -62,7 +64,7 @@ export default async function postRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: updatePost
+            handler: postController.updatePost
         });
 
     server.route(
@@ -78,7 +80,7 @@ export default async function postRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: partialUpdatePost
+            handler: postController.partialUpdatePost
         });
 
     server.route(
@@ -93,7 +95,7 @@ export default async function postRoutes(server: FastifyInstance) {
                     200: defaultResponseSucess
                 }
             },
-            handler: deletePost
+            handler: postController.deletePost
 
         });
 

@@ -1,25 +1,27 @@
-import { createError } from "@fastify/error"
+import { ErrorType } from "../../schemas/error.schema.ts";
+import { AppException } from "../appException.ts";
 
-export const UserNotFoundError = createError(
-    'USER_NOT_FOUND',
-    'User with ID %s was not found',
-    404
-);
 
-export const UserNotCreatedError = createError(
-    'USER_NOT_CREATED',
-    'Error to create User',
-    500
-);
+export class UserNotFoundException extends AppException {
+    constructor(details: ErrorType) {
+        super(details, "UserNotFoundException");
+    }
+}
 
-export const UserNotUpdatedError = createError(
-    'USER_NOT_UPDATED',
-    'Error to update User',
-    500
-);
+export class UserNotCreatedException extends AppException {
+    constructor(details: ErrorType) {
+        super(details, "UserNotCreatedException");
+    }
+}
 
-export const UserNotDeletedError = createError(
-    'USER_NOT_DELETED',
-    'Error to delete User',
-    500
-);
+export class UserNotUpdatedException extends AppException {
+    constructor(details: ErrorType) {
+        super(details, "UserNotUpdatedException");
+    }
+}
+
+export class UserNotDeletedException extends AppException {
+    constructor(details: ErrorType) {
+        super(details, "UserNotDeletedException");
+    }
+}
