@@ -5,6 +5,7 @@ const errorHandler = (err: Error, request: FastifyRequest, reply: FastifyReply) 
     const { log } = request.server;
 
     if (err instanceof AppException) {
+        log.error(err);
         reply.status(err.details.httpCode).send({
             date: new Date(),
             description: err.details.description,

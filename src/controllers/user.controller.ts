@@ -1,15 +1,19 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { createUpdateUserBodyType, createUpdateUserSchema } from '../schemas/user.shema.ts'
-import { UserNotCreatedException, UserNotFoundException, UserNotUpdatedException, UserNotDeletedException } from '../error/user/userErrors.ts';
+import { UserNotCreatedException, UserNotFoundException, UserNotUpdatedException, UserNotDeletedException } from '../error/user/userExceptions.ts';
 import { defaultIdParam, defaultIdParamType } from '../schemas/default.schema.ts';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/client';
 
 
 export class UserController {
 
+    private prismaException = 'PrismaClientKnownRequestError';
+
     async getAllUsers(request: FastifyRequest, reply: FastifyReply) {
         const { prisma, log } = request.server;
         const users = await prisma.user.findMany().catch((e: Error) => {
+            if (e.name.match(this.prismaException)) {
+                throw new UserNotFoundException({ httpCode: 404, description: "USER_NOT_FOUND", message: e.message, path: request.url })
+            }
             log.error(e)
             throw e;
         })
@@ -24,11 +28,12 @@ export class UserController {
             where: {
                 id: parseInt(id)
             }
-        }).catch((e: PrismaClientKnownRequestError) => {
-            log.error(e);
-            
-            if(e.code == 'P2025')
-            throw new UserNotFoundException({ httpCode: 404, description: "USER_NOT_FOUND", message: `Not found user with id: ${id}`, path: request.url })
+        }).catch((e: Error) => {
+            if (e.name.match(this.prismaException)) {
+                throw new UserNotFoundException({ httpCode: 404, description: "USER_NOT_FOUND", message: e.message, path: request.url })
+            }
+            log.error(e)
+            throw e;
         })
 
         reply.status(200).send(user)
@@ -44,8 +49,11 @@ export class UserController {
                 email: email
             }
         }).catch((e: Error) => {
+            if (e.name.match(this.prismaException)) {
+                throw new UserNotCreatedException({ httpCode: 500, description: "USER_NOT_CREATED", message: e.message, path: request.url })
+            }
             log.error(e)
-            throw new UserNotCreatedException({ httpCode: 500, description: "USER_NOT_CREATED", message: "Not created", path: request.url })
+            throw e;
         })
 
         reply.status(201).send({ message: 'User created' })
@@ -65,8 +73,11 @@ export class UserController {
                 email: email
             }
         }).catch((e: Error) => {
+            if (e.name.match(this.prismaException)) {
+                throw new UserNotUpdatedException({ httpCode: 500, description: "USER_NOT_UPDATED", message: e.message, path: request.url })
+            }
             log.error(e)
-            throw new UserNotUpdatedException({ httpCode: 500, description: "USER_NOT_UPDATED", message: "Not updated with id: " + id, path: request.url })
+            throw e;
         })
 
         reply.status(200).send({ message: "User updated" })
@@ -82,8 +93,11 @@ export class UserController {
                 id: parseInt(id)
             }
         }).catch((e: Error) => {
+            if (e.name.match(this.prismaException)) {
+                throw new UserNotDeletedException({ httpCode: 500, description: "USER_NOT_DELETED", message: e.message, path: request.url })
+            }
             log.error(e)
-            throw new UserNotDeletedException({ httpCode: 500, description: "USER_NOT_DELETED", message: "Not deleted", path: request.url })
+            throw e;
         })
 
         reply.status(200).send({ message: "User deleted" })
