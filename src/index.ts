@@ -38,10 +38,11 @@ server.register(fastifySwagger, {
             description: 'Base path URL'
         }]
     },
-    transform: jsonSchemaTransform
+    transform: jsonSchemaTransform,
+    logLevel: 'silent'
 });
 
-server.register(fastifySwaggerUi, { routePrefix: '/docs' })
+server.register(fastifySwaggerUi, { routePrefix: '/docs', logLevel: "silent" })
 
 server.setErrorHandler(errorHandler)
 
@@ -49,7 +50,7 @@ server.register(userRoutes, { prefix: `${PATH_API}/users` })
 server.register(profileRoutes, { prefix: `${PATH_API}/profiles` })
 server.register(postRoutes, { prefix: `${PATH_API}/post` })
 
-server.register(helathRoutes)
+server.register(helathRoutes, { prefix: `${PATH_API}` })
 
 server.listen({ port: server.config.PORT }, (error, address) => {
     if (error) {
