@@ -4,6 +4,7 @@ import { fastifyCors } from '@fastify/cors'
 import { validatorCompiler, serializerCompiler, ZodTypeProvider, jsonSchemaTransform } from 'fastify-type-provider-zod'
 import { fastifySwagger } from "@fastify/swagger";
 import { fastifySwaggerUi } from "@fastify/swagger-ui";
+import dotenv from 'dotenv';
 
 import envSchema from './schemas/env.schema.ts'
 import loggerConfig from './config/logger.config.ts'
@@ -14,14 +15,16 @@ import profileRoutes from "./routes/profile.route.ts";
 import postRoutes from "./routes/post.route.ts";
 import helathRoutes from "./routes/health.route.ts";
 
+dotenv.config()
+
 const server = fastify({ logger: loggerConfig }).withTypeProvider<ZodTypeProvider>();
 
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
 
-await server.register(fastifyEnv, { dotenv: true, schema: envSchema, });
+await server.register(fastifyEnv, { schema: envSchema, dotenv: true, confKey: 'config' });
 
-const PATH_API: string = server.config.PATH_API;
+const { PATH_API, PORT } = server.config;
 
 server.register(prismaPlugin);
 
@@ -52,7 +55,7 @@ server.register(postRoutes, { prefix: `${PATH_API}/post` })
 
 server.register(helathRoutes, { prefix: `${PATH_API}` })
 
-server.listen({ port: server.config.PORT }, (error, address) => {
+server.listen({ port: PORT }, (error, address) => {
     if (error) {
         server.log.error(error);
         process.exit(1);
