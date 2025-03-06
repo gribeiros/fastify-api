@@ -55,7 +55,7 @@ server.register(postRoutes, { prefix: `${PATH_API}/post` })
 
 server.register(helathRoutes, { prefix: `${PATH_API}` })
 
-server.listen({ host: 'localhost', port: PORT }, (error, address) => {
+server.listen({ host: '0.0.0.0', port: PORT }, (error, address) => {
     if (error) {
         server.log.error(error);
         process.exit(1);
