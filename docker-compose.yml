@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   fastify_api_db:
     image: postgres

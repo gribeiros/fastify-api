@@ -15,6 +15,7 @@ const errorHandler = (err: Error, request: FastifyRequest, reply: FastifyReply) 
     } else {
         log.error(err);
         reply.status(500).send({
+            date: new Date(),
             code: 500,
             message: err.message,
         });
